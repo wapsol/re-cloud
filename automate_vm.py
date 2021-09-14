@@ -4,6 +4,7 @@ import time
 
 def provision_new_server(new_user_data):
 
+    # To do: set up as environment variables
     token = "Bearer lyhhUacDJNH19LxVujGooKoCiaTsCHPboY0NEhGxLrsQcXjlE25uNWySw98m6P2d"
     snapshot_image_id =  "47744853"
 
