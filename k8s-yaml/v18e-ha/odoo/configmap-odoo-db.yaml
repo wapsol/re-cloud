@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: odoo-ha-config
+  namespace: v18e-ha
+  labels:
+    app: odoo-ha
+data:
+  HOST: v18e-ha-postgre
+  PASSWORD: odoo18@2024
+  USER: odoo

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: commercecore-odoo
+  namespace: commercecore
+  labels:
+    app: commercecore-odoo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: commercecore-odoo
+  template:
+    metadata:
+      labels:
+        app: commercecore-odoo
+    spec:
+      volumes:
+      - name: odoo-data
+        persistentVolumeClaim:
+          claimName: commercecore-odoo-pvc
+      - name: odoo-config
+        configMap:
+          name: commercecore-odoo-config-app
+      containers:
+      - name: odoo
+        image: 127.0.0.1:5000/odoo-commercecore:commit-1
+        envFrom:
+        - configMapRef:
+            name: commercecore-odoo-config-db
+        resources: {}
+        volumeMounts:
+        - name: odoo-data
+          mountPath: /var/lib/odoo
+        - name: odoo-config
+          mountPath: /etc/odoo
+
+        imagePullPolicy: IfNotPresent

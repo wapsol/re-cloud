@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: commercecore-odoo-config-app
+  namespace: commercecore
+  labels:
+    app: commercecore-odoo-config-app
+data:
+  odoo.conf: |
+    [options]
+    admin_passwd = xuyapsdeej
+    addons_path=/mnt/extra-addons,/mnt/theme,/mnt/partner-contact,/mnt/simplify_mops,/mnt/product-variant
+    limit_time_cpu = 1600000
+    limit_time_real = 122000000
+    longpolling_port = 8072
+    proxy_mode = True
+    reverse_proxy = True
+    list_db=True
+    db_filter=serp_09_12
+    logfile=/var/log/odoo/odoo-server.log
+    workers = 5
+    limit_memory_hard = 646048645
+    limit_memory_soft = 516838916
+    limit_request = 8192
+    max_cron_threads = 2

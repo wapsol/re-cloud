@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: commercecore-odoo-config-db
+  namespace: commercecore
+  labels:
+    app: commercecore-odoo-config-db
+data:
+  HOST: commercecore-postgre
+  PASSWORD: odoo
+  USER: odoo

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: commercecore-postgre
+  namespace: commercecore
+  labels:
+    app: commercecore-postgre
+spec:
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
+  selector:
+    app: commercecore-postgre
+  type: ClusterIP

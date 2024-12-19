@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: v18e-ha-postgre
+  namespace: v18e-ha
+  labels:
+    app: v18e-ha-postgre
+spec:
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
+  selector:
+    app: v18e-ha-postgre
+  type: ClusterIP

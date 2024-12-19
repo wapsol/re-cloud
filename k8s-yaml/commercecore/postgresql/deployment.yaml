@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: commercecore-postgre
+  namespace: commercecore
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: commercecore-postgre
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: commercecore-postgre
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: postgres-config
+        image: postgres:10
+        imagePullPolicy: IfNotPresent
+        name: postgresql
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "2"
+            memory: "2Gi"
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+        volumeMounts:
+        - mountPath: /var/lib/postgresql
+          name: postgresdb
+      volumes:
+      - name: postgresdb
+        persistentVolumeClaim:
+          claimName: commercecore-postgresql-pvc
+      nodeName: dev1.simplify-erp.de
