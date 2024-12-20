@@ -2,7 +2,7 @@
 
 ## First apply the Odoo and PostgreSQL instances
 - edit the name of the yaml files follow with the name of the app we want to migrate
-- Edit the postgresql and odoo versions so that it match the app
+- Edit the postgresql and odoo versions so that it match the app (example odoo:18, postgresql:17)
 - use commercecore as a template
 - Apply all the resources with kubectl tool
 
