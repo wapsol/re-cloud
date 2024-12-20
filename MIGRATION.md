@@ -109,4 +109,93 @@ sudo docker push 127.0.0.1:5000/odoo-kj:commit-1
 ```
 
 ## Scale replicas in the deployment yaml
-- Edit the replicas factor in the odoo deployment yaml file from 1 to 2 => ensure HA 
+- Edit the replicas factor in the odoo deployment yaml file from 1 to 2 => ensure HA
+- 
+
+## Enable TLS with ingress-nginx and cert-manager
+Create an issuer file:
+```
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer # I'm using ClusterIssuer here
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: <your-email-address>
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          class: traefik 
+```
+If you already created this, you can skip
+
+Expose a deployment via a service:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: odoo
+  namespace: tyroled
+spec:
+  ports:
+    - name: http
+      port: 8069
+      targetPort: 8069
+    - name: longpolling
+      port : 8072
+      targetPort: 8072
+  selector:
+    app: odoo
+```
+
+In this case odoo app is exposed via port 8069. Make sure when defining an ingress, port to be exposed via ingress must corresponds to exposed service port:
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tyroled-ingress
+  namespace: tyroled
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: tyroled.simplify-erp.de
+    http:
+      paths:
+      - backend:
+          service:
+            name: odoo
+            port:
+              number: 8069
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - tyroled.simplify-erp.de
+    secretName: tyroled-tls
+status:
+  loadBalancer:
+    ingress:
+    - ip: 88.99.162.52
+```
+In addition, ask your admin for changing DNS record of domain you want to apply into.
+You may want to define a secret file to get TLS certificate:
+
+```
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tyroled-tls
+  namespace: tyroled
+spec:
+  dnsNames:
+    - tyroled.simplify-erp.de
+  secretName: tyroled-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+```
