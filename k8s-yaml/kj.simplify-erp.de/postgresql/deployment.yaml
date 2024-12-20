@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kj-postgre
+  namespace: kj
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kj-postgre
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: kj-postgre
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: postgres-config
+        image: postgres:17
+        imagePullPolicy: IfNotPresent
+        name: postgresql
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "2"
+            memory: "2Gi"
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+        volumeMounts:
+        - mountPath: /var/lib/postgresql
+          name: postgresdb
+      volumes:
+      - name: postgresdb
+        persistentVolumeClaim:
+          claimName: kj-postgresql-pvc
+      nodeName: dev1.simplify-erp.de

@@ -2,6 +2,7 @@
 
 ## First apply the Odoo and PostgreSQL instances
 - edit the name of the yaml files follow with the name of the app we want to migrate
+- Edit the postgresql and odoo versions so that it match the app
 - use commercecore as a template
 - Apply all the resources with kubectl tool
 
@@ -36,7 +37,34 @@ kubectl cp -n commercecore serp_09_12.sql commercecore-postgre-9d95c6484-5qtsz:/
 ## Action restore postgresql
 ```
 
+## Build local docker image
+- create Dockerfile right in the folder which contains the add-on folder, here is and example
+
+```
+# Dockerfile
+
+FROM odoo:<edit-the-version-follow-the-app>
+
+COPY --chown=odoo addons /mnt/extra-addons
+COPY --chown=odoo enterprise /mnt/enterprise
+<Add more COPY actions here if there are mores add-on folder to run>
+
+```
+
+- Run docker build and push image to local registry
+
+```
+## Run those commands to build the image 
+IMAGE_NAME=127.0.0.1:5000/odoo-commercecore:commit-1
+sudo docker build . --tag $IMAGE_NAME
+sudo docker push $IMAGE_NAME
+
+```
+
+
 ## Restart the Odoo deployments and apply the ingress and tls cert creation
+- Change the image name the odoo deployment.yaml files
+
 ```
 ## Restart to deployment Odoo
 kubectl rollout restart deployment -n <namespace_follow_app_name> <deployment_follow_app_name> 
