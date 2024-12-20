@@ -16,11 +16,15 @@ k apply -f .
 
 ```
 
-## Copy the odoo data and the postgresql database to the rec1 machine
+## Copy the odoo data and the postgresql database to the rec1 (pick an other machine is okay) machine
+- find all the volume from the containers: docker inspect ...
 - Copy odoo data: using scp or some tools that you familiar with
 - take and Copy sql database backup or the postgresql database folder
 
 ```
+## Get the docker volumes
+docker inspect ...
+
 #Example
 scp -r /var/lib/docker/volumes/simplify-erp14_odoo-web-data/_data root@88.99.145.186:/data/commercecore/odoo-data
 
@@ -29,10 +33,9 @@ pg_dump -U odoo -d commercecore > commercecore.sql
 
 scp commercecore-all.sql root@88.99.145.186:/data/commercecore/postgre
 
-
 ```
 
-## Copy the data in rec1 machine into the pods
+## Copy the data in rec1 (or other machine) machine into the pods
 - Using the kubectl tool to copy the data in to the pods
 
 ```
