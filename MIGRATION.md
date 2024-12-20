@@ -87,3 +87,26 @@ kubectl apply -f ingress.yaml
 ```
 
 ## Verify status of the app
+- Edit local /etc/hosts file and make sure the app is deployed correctly
+
+## Copy the image to other nodes
+- This step will copy the local docker image for example 127.0.0.1:5000/odoo-commercecore:commit-1 (IMAGE_NAME in the building step) to other nodes in the cluster
+- action those commands
+
+```
+## Save the docker image
+sudo docker image save 127.0.0.1:5000/odoo-kj:commit-1 > odoo-kj.tar
+## Copy to other nodes
+scp odoo-kj.tar tan@88.99.145.186:/home/tan/build-image
+
+## ssh to orther nodes 
+ssh tan@88.99.145.186
+## Load docker image
+sudo docker load < odoo-kj.tar
+
+## Push to local registry
+sudo docker push 127.0.0.1:5000/odoo-kj:commit-1
+```
+
+## Scale replicas in the deployment yaml
+- Edit the replicas factor in the odoo deployment yaml file from 1 to 2 => ensure HA 
