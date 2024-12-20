@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kj-ingress
+  namespace: kj
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: kj.simplify-erp.de
+    http:
+      paths:
+      - backend:
+          service:
+            name: kj-odoo-svc
+            port:
+              number: 8069
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - kj.simplify-erp.de
+    secretName: kj-tls
+status:
+  loadBalancer:
+    ingress:
+    - ip: 88.99.145.186

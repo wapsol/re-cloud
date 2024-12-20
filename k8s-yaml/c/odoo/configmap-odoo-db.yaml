@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tyroled-odoo-config-db
+  namespace: tyroled
+  labels:
+    app: tyroled-odoo-config-db
+data:
+  HOST: tyroled-postgre
+  PASSWORD: odoo18@2024
+  USER: odoo

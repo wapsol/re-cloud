@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tyroled-odoo
+  namespace: tyroled
+  labels:
+    app: tyroled-odoo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tyroled-odoo
+  template:
+    metadata:
+      labels:
+        app: tyroled-odoo
+    spec:
+      volumes:
+      - name: odoo-data
+        persistentVolumeClaim:
+          claimName: tyroled-odoo-pvc
+      - name: odoo-config
+        configMap:
+          name: tyroled-odoo-config-app
+      containers:
+      - name: odoo
+        image: odoo:18
+        envFrom:
+        - configMapRef:
+            name: tyroled-odoo-config-db
+        resources: {}
+        volumeMounts:
+        - name: odoo-data
+          mountPath: /var/lib/odoo
+        - name: odoo-config
+          mountPath: /etc/odoo
+
+        imagePullPolicy: IfNotPresent
