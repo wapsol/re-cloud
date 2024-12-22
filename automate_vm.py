@@ -1,3 +1,5 @@
+# Script to automate provisioning a new server using a snapshot image
+
 import requests
 import json
 import time
