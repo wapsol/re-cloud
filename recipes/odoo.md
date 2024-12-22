@@ -10,7 +10,7 @@ This recipe aims to help you run Odoo in a High Availability (HA) mode, which me
 
 If you are new to Kubernetes, read the basics here, and there's lots of useful information on the web and YouTube, not to mention your favourite LLM based AI-chatbot!
 
-## Baseline Situation
+# Baseline Situation
 
 You should be using this recipe if your current situaion is as follows:
 
@@ -26,7 +26,24 @@ You should be using this recipe if your current situaion is as follows:
 
 3. Your team uses Git to push code from their dev-environments, and pull via CLI on run-environments (staging, production and maybe others).
 
+# Set up
+
+x
+
+# Backup your Dockers
+
+..
+
+# Transfer Images and Volumes to Cluster
+
+..
+
+# Prepare your Kubernetes YAML Deployment Files
+
+.. 
+
 ## First apply the Odoo and PostgreSQL instances
+
 - edit the name of the yaml files follow with the name of the app we want to migrate
 - Edit the postgresql and odoo versions so that it match the app (example odoo:18, postgresql:17)
 - use commercecore as a template
@@ -43,6 +60,7 @@ k apply -f .
 ```
 
 ## Copy the odoo data and the postgresql database to the rec1 (pick an other machine is okay) machine
+
 - find all the volume from the containers: docker inspect ...
 - Copy odoo data: using scp or some tools that you familiar with
 - take and Copy sql database backup or the postgresql database folder
