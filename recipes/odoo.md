@@ -26,9 +26,16 @@ You should be using this recipe if your current situaion is as follows:
 
 3. Your team uses Git to push code from their dev-environments, and pull via CLI on run-environments (staging, production and maybe others).
 
-# Set up
+## Current Non-cluster Setup
+
+![image](https://github.com/user-attachments/assets/50274eaa-61ea-4c42-9fd5-9701530b19a3)
+
+### Source Runtime 
 
 x
+
+### Target Runtime
+
 
 # Backup your Dockers
 
