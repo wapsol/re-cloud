@@ -30,26 +30,22 @@ You should be using this recipe if your current situaion is as follows:
 
 ![image](https://github.com/user-attachments/assets/50274eaa-61ea-4c42-9fd5-9701530b19a3)
 
-### Source Runtime 
+# Step 1: Backup your Dockers
 
-x
+1. Back up Docker images (`oad1`, `opd1`).
+2. Back up the Perisitent volumes (`pvo1`, `pvp1`)
 
-### Target Runtime
-
-
-# Backup your Dockers
+# Step 2: Transfer Images and Volumes to Transition Folder `/tf/`
 
 ..
 
-# Transfer Images and Volumes to Transition Folder /tf/
-
-..
-
-# Prepare your Kubernetes YAML Deployment Files
+# Step 3: Prepare your Kubernetes YAML Deployment Files
 
 .. 
 
-## First apply the Odoo and PostgreSQL instances
+---
+
+## Apply the Odoo and PostgreSQL instances
 
 - edit the name of the yaml files follow with the name of the app we want to migrate
 - Edit the postgresql and odoo versions so that it match the app (example odoo:18, postgresql:17)
@@ -63,7 +59,6 @@ k apply -f .
 
 cd k8s-yaml/commercecore/odoo
 k apply -f .
-
 ```
 
 ## Copy the odoo data and the postgresql database to the rec1 (pick an other machine is okay) machine
@@ -83,7 +78,6 @@ scp -r /var/lib/docker/volumes/simplify-erp14_odoo-web-data/_data root@88.99.145
 pg_dump -U odoo -d commercecore > commercecore.sql
 
 scp commercecore-all.sql root@88.99.145.186:/data/commercecore/postgre
-
 ```
 
 ## Copy the data in rec1 (or other machine) machine into the pods
