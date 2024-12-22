@@ -138,26 +138,20 @@ sudo docker push $IMAGE_NAME
 - Change the image name the odoo deployment.yaml files
 - from odoo:18 -> 127.0.0.1:5000/odoo-commercecore:commit-1 (IMAGE_NAME in the building step)
 
-```
 ## Restart to deployment Odoo
+```
 kubectl rollout restart deployment -n <namespace_follow_app_name> <deployment_follow_app_name> 
 
 cd k8s-yaml/commercecore
 kubectl apply -f ingress.yaml
 ```
 
-# Step 6: Final Checks
-
-## Verify status of the app
-- Edit local /etc/hosts file and make sure the app is deployed correctly
-
----
-
 ## Scale replicas in the deployment yaml
-- Edit the replicas factor in the odoo deployment yaml file from 1 to 2 => ensure HA
-- 
 
-## Enable TLS with ingress-nginx and cert-manager
+- Edit the replicas factor in the odoo deployment yaml file from 1 to 2 => ensure HA
+
+## Enable TLS with `ingress-nginx` and `cert-manager`
+
 Create an issuer file:
 ```
 apiVersion: cert-manager.io/v1
@@ -226,6 +220,9 @@ status:
     ingress:
     - ip: 88.99.162.52
 ```
+
+## Change DNS
+
 In addition, ask your admin for changing DNS record of domain you want to apply into.
 You may want to define a secret file to get TLS certificate:
 
@@ -244,3 +241,9 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
 ```
+
+# Step 6: Final Checks
+
+## Verify status of the app
+- Edit local /etc/hosts file and make sure the app is deployed correctly
+
