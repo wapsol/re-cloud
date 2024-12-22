@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kj-odoo-config-db
+  namespace: kj
+  labels:
+    app: kj-odoo-config-db
+data:
+  HOST: kj-postgre
+  PASSWORD: odoo18@2024
+  USER: odoo

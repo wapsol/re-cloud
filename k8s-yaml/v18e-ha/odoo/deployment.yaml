@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo18-ha
+  namespace: v18e-ha
+  labels:
+    app: odoo18-ha
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: odoo18-ha
+  template:
+    metadata:
+      labels:
+        app: odoo18-ha
+    spec:
+      volumes:
+      - name: odoo-data
+        persistentVolumeClaim:
+          claimName: v18e-ha-pvc
+      containers:
+      - name: odoo
+        image: 127.0.0.1:5000/odoo-v18e:commit-5
+        envFrom:
+        - configMapRef:
+            name: odoo-ha-config
+        resources: {}
+        volumeMounts:
+        - name: odoo-data
+          mountPath: /var/lib/odoo
+        imagePullPolicy: IfNotPresent
+      nodeName: rec1.re-cloud.io

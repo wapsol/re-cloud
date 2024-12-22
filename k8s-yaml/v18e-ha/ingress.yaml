@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: v18e-ha-ingress
+  namespace: v18e-ha
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: v18e-ha.simplify-erp.de
+    http:
+      paths:
+      - backend:
+          service:
+            name: odoo-ha-svc
+            port:
+              number: 8069
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - v18e-ha.simplify-erp.de
+    secretName: v18e-ha-tls
+status:
+  loadBalancer:
+    ingress:
+    - ip: 88.99.145.186

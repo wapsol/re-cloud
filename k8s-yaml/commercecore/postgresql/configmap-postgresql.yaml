@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: commercecore
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: postgres
+  POSTGRES_PASSWORD: odoo
+  POSTGRES_USER: odoo
