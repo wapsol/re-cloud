@@ -1,4 +1,14 @@
-# Migration process with Longhorn volume and running Odoo in multi-instance mode (HA Mode)
+This recipe outlines how you can migrate an Odoo Docker instance into a Kubernetes cluster.
+It involves following sub-systems:
+
+1. k0s based Kubernetes cluster.
+2. Longhorn for persistent-volumes.
+3. k9s as cluster overview
+4. kubectl, k as client to the cluster
+
+This recipe aims to help you run Odoo in a High Availability (HA) mode, which means, if one instance goes down, users will continue to be able access the service, albiet at a slightly reduced speed.
+
+If you are new to Kubernetes, read the basics here, and there's lots of useful information on the web and YouTube, not to mention your favourite LLM based AI-chatbot!
 
 ## Baseline Situation
 

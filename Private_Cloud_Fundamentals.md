@@ -1,0 +1,1 @@
+If you are an absolute new comer to private cloud computing, this page will clue you up with the fundamental 
