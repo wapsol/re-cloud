@@ -35,15 +35,30 @@ You should be using this recipe if your current situaion is as follows:
 1. Back up Docker images (`oad1`, `opd1`).
 2. Back up the Perisitent volumes (`pvo1`, `pvp1`)
 
+```
+## Save the docker image
+sudo docker image save 127.0.0.1:5000/odoo-kj:commit-1 > odoo-kj.tar
+```
+
 # Step 2: Transfer Images and Volumes to Transition Folder `/tf/`
 
-..
+- This step will copy the local docker image for example 127.0.0.1:5000/odoo-commercecore:commit-1 (IMAGE_NAME in the building step) to other nodes in the cluster
+- action those commands
+
+```
+## Copy to other nodes
+scp odoo-kj.tar tan@88.99.145.186:/home/tan/build-image
+
+## ssh to other nodes 
+ssh tan@88.99.145.186
+## Load docker image
+sudo docker load < odoo-kj.tar
+
+## Push to local registry
+sudo docker push 127.0.0.1:5000/odoo-kj:commit-1
+```
 
 # Step 3: Prepare your Kubernetes YAML Deployment Files
-
-.. 
-
----
 
 ## Apply the Odoo and PostgreSQL instances
 
@@ -91,10 +106,10 @@ kubectl cp -n commercecore . <pod_name>:/var/lib/odoo/
 kubectl cp -n commercecore serp_09_12.sql commercecore-postgre-9d95c6484-5qtsz:/var/lib/postgresql
 ## Action restore postgresql
 psql -U odoo -d commercecore < commercecore.sql 
-
 ```
 
-## Build local docker image
+# Step 4: Build Docker image for k*s Runtime
+
 - create Dockerfile right in the folder which contains the add-on folder, here is and example
 
 ```
@@ -115,9 +130,9 @@ COPY --chown=odoo enterprise /mnt/enterprise
 IMAGE_NAME=127.0.0.1:5000/odoo-commercecore:commit-1
 sudo docker build . --tag $IMAGE_NAME
 sudo docker push $IMAGE_NAME
-
 ```
 
+# Step 5: Load (new) Docker image into k*s Runtime
 
 ## Restart the Odoo deployments and apply the ingress and tls cert creation
 - Change the image name the odoo deployment.yaml files
@@ -131,27 +146,12 @@ cd k8s-yaml/commercecore
 kubectl apply -f ingress.yaml
 ```
 
+# Step 6: Final Checks
+
 ## Verify status of the app
 - Edit local /etc/hosts file and make sure the app is deployed correctly
 
-## Copy the image to other nodes
-- This step will copy the local docker image for example 127.0.0.1:5000/odoo-commercecore:commit-1 (IMAGE_NAME in the building step) to other nodes in the cluster
-- action those commands
-
-```
-## Save the docker image
-sudo docker image save 127.0.0.1:5000/odoo-kj:commit-1 > odoo-kj.tar
-## Copy to other nodes
-scp odoo-kj.tar tan@88.99.145.186:/home/tan/build-image
-
-## ssh to orther nodes 
-ssh tan@88.99.145.186
-## Load docker image
-sudo docker load < odoo-kj.tar
-
-## Push to local registry
-sudo docker push 127.0.0.1:5000/odoo-kj:commit-1
-```
+---
 
 ## Scale replicas in the deployment yaml
 - Edit the replicas factor in the odoo deployment yaml file from 1 to 2 => ensure HA
