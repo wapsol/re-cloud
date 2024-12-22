@@ -41,7 +41,7 @@ x
 
 ..
 
-# Transfer Images and Volumes to Cluster
+# Transfer Images and Volumes to Transition Folder /tf/
 
 ..
 
