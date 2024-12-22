@@ -1,10 +1,10 @@
 This recipe outlines how you can migrate an Odoo Docker instance into a Kubernetes cluster.
 It involves following sub-systems:
 
-1. k0s based Kubernetes cluster.
-2. Longhorn for persistent-volumes.
-3. k9s as cluster overview
-4. kubectl, k as client to the cluster
+1. `k0s` based Kubernetes cluster.
+2. `longhorn` for persistent-volumes.
+3. `k9s` as cluster overview
+4. `kubectl`, `k` as client to the cluster
 
 This recipe aims to help you run Odoo in a High Availability (HA) mode, which means, if one instance goes down, users will continue to be able access the service, albiet at a slightly reduced speed.
 
