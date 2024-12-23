@@ -24,7 +24,7 @@ spec:
           name: kj-odoo-config-app
       containers:
       - name: odoo
-        image: 127.0.0.1:5000/odoo-kj:commit-1
+        image: crepo.re-cloud.io/re-cloud/odoo-kj:commit-1
         envFrom:
         - configMapRef:
             name: kj-odoo-config-db
@@ -36,3 +36,5 @@ spec:
           mountPath: /etc/odoo
 
         imagePullPolicy: IfNotPresent
+      imagePullSecrets:
+      - name: harbor-re-cloud

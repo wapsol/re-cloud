@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: iooluce-ingress
+  namespace: tyroled
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: iooluce.simplify-erp.de
+    http:
+      paths:
+      - backend:
+          service:
+            name: odoo
+            port:
+              number: 8069
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - iooluce.simplify-erp.de
+    secretName: iooluce-tls
+status:
+  loadBalancer:
+    ingress:
+    - ip: 88.99.145.186
+    - ip: 88.99.162.52
