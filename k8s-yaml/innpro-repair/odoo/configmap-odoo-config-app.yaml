@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: innpro-repair-odoo-config-app
+  namespace: innpro-repair
+  labels:
+    app: innpro-repair-odoo-config-app
+data:
+  odoo.conf: |
+    [options]
+    admin_passwd = 4i4ur9hb6p8mrse!
+    longpolling_port = 8072
+    xmlrpc_port = 8069
+    addons_path=/mnt/extra-addons,/mnt/oca_collection/odoo-formio/,/mnt/oca_collection/helpdesk/,/mnt/oca_collection/server-brand/,/mnt/oca_collection/server-ux/,/mnt/3p_collection,/mnt/oca_collection/partner-contact,/mnt/extra-addons/custom_innpro,/mnt/extra-addons/llm
+    logfile=/var/log/odoo/odoo-server.log
+    proxy_mode = True
+    limit_time_cpu = 60000000
+    limit_time_real = 1200000000
+    limit_memory_hard = 816717824
+    limit_memory_soft = 653374259
+    limit_request = 8192
+    max_cron_threads = 2
+    workers = 2
+    log_level = debug_sql
+    data_dir = /var/lib/odoo/odoo-data
+    # Configurations for DokuScan
+    gg_project_id = simplify-erp-com
+    gg_location = eu
+    gg_processor_id = 40576c6a49a36f61
+    gg_mime_type = application/pdf
+    gg_default_auth_path = /mnt/extra-addons/poweron_ocr/simplify-erp-com-e319076613d7.json

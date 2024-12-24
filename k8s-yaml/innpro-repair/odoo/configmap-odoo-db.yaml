@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: innpro-repair-odoo-config-db
+  namespace: innpro-repair
+  labels:
+    app: innpro-repair-odoo-config-db
+data:
+  HOST: db-innpro-repair
+  PASSWORD: odoo
+  USER: odoo

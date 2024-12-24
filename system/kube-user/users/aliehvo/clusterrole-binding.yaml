@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: aliehvo-bind-dev-role
+subjects:
+- kind: User
+  name: "aliehvo" # Replace with the actual username (CN in the certificate)
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: dev-role # Replace with the desired ClusterRole name
+  apiGroup: rbac.authorization.k8s.io

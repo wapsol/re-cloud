@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  namespace: innpro-repair
+  labels:
+    app: odoo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      volumes:
+      - name: odoo-data
+        persistentVolumeClaim:
+          claimName: innpro-repair-odoo-pvc
+      - name: odoo-config
+        configMap:
+          name: innpro-repair-odoo-config-app
+      containers:
+      - name: odoo
+        image: crepo.re-cloud.io/re-cloud/odoo-innpro-repair:commit-1
+        envFrom:
+        - configMapRef:
+            name: innpro-repair-odoo-config-db
+        ports:
+        - containerPort: 8069
+          protocol: TCP
+        - containerPort: 8072
+          protocol: TCP
+        resources: {}
+        volumeMounts:
+        - name: odoo-config
+          mountPath: /etc/odoo
+        - name: odoo-data
+          mountPath: /var/lib/odoo/odoo-data
+        imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      securityContext: {}
+      schedulerName: default-scheduler
+      imagePullSecrets:
+      - name: harbor-re-cloud
