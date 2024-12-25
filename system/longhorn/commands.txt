@@ -1,0 +1,1 @@
+helm upgrade longhorn longhorn/longhorn --namespace longhorn-system --version 1.7.2 -f values.yaml

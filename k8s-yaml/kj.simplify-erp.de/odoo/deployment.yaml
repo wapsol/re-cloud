@@ -38,3 +38,10 @@ spec:
         imagePullPolicy: IfNotPresent
       imagePullSecrets:
       - name: harbor-re-cloud
+      nodeSelector:
+        odoo: "true"
+      tolerations:
+      - key: "odoo"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
