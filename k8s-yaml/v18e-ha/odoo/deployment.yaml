@@ -30,4 +30,10 @@ spec:
         - name: odoo-data
           mountPath: /var/lib/odoo
         imagePullPolicy: IfNotPresent
-      nodeName: rec1.re-cloud.io
+      nodeSelector:
+        odoo: "true"
+      tolerations:
+      - key: "odoo"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
