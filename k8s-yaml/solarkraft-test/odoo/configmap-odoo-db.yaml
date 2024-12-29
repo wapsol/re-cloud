@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: solarkraft-test-odoo-config-db
+  namespace: solarkraft-test
+  labels:
+    app: solarkraft-test-odoo-config-db
+data:
+  HOST: db-solarkraft-test
+  PASSWORD: odoo
+  USER: odoo

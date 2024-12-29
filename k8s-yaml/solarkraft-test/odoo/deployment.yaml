@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  namespace: solarkraft-test
+  labels:
+    app: odoo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      volumes:
+      - name: odoo-config
+        configMap:
+          name: solarkraft-test-odoo-config-app
+      - name: odoo-data
+        persistentVolumeClaim:
+          claimName: solarkraft-test-odoo-pvc
+      containers:
+      - name: odoo
+        image: crepo.re-cloud.io/re-cloud/odoo-solarkaft-test:commit-1
+        ports:
+        - containerPort: 8069
+          protocol: TCP
+        - containerPort: 8072
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: solarkraft-test-odoo-config-db
+        resources: {}
+        volumeMounts:
+        - name: odoo-config
+          mountPath: /etc/odoo
+        - name: odoo-data
+          mountPath: /var/lib/odoo/odoo-data
+        imagePullPolicy: IfNotPresent
+      imagePullSecrets:
+      - name: harbor-re-cloud
+      tolerations:
+      - key: odoo
+        operator: Equal
+        value: 'true'
+        effect: NoSchedule
+      nodeSelector:
+        odoo: 'true'

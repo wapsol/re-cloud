@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simplify-erp-de-ingress
+  namespace: simplify-erp
+  annotations:
+    nginx.ingress.kubernetes.io/server-snippet: |
+      if ($host = 'simplify-erp.de') {
+        return 303 https://simplify-erp.com$request_uri;
+      }
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: simplify-erp.de
+    http:
+      paths:
+      - backend:
+          service:
+            name: odoo
+            port:
+              number: 8099
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - simplify-erp.com
+    secretName: simplify-tls
+status:
+  loadBalancer:
+    ingress:
+    - ip: 88.99.145.186
+    - ip: 88.99.162.52

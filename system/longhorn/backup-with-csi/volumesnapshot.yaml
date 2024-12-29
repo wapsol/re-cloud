@@ -1,0 +1,9 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: longhorn-erp-simplify-erp-odoo-pvc
+  namespace: erp-simplify-erp
+spec:
+  volumeSnapshotClassName: longhorn-backup-vsc
+  source:
+    persistentVolumeClaimName: erp-simplify-erp-odoo-pvc
