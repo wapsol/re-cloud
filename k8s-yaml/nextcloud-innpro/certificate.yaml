@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cloud.innpro.poweron.software-tls
+  namespace: nextcloud-cloud-innpro
+spec:
+  dnsNames:
+  - cloud.innpro.poweron.software
+  secretName: cloud.innpro.poweron.software-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer

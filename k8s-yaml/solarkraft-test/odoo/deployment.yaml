@@ -24,7 +24,7 @@ spec:
           claimName: solarkraft-test-odoo-pvc
       containers:
       - name: odoo
-        image: crepo.re-cloud.io/re-cloud/odoo-solarkaft-test:commit-1
+        image: crepo.re-cloud.io/re-cloud/odoo-solarkaft-test:commit-system-test-11
         ports:
         - containerPort: 8069
           protocol: TCP

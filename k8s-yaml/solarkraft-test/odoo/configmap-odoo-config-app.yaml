@@ -47,7 +47,7 @@ data:
 
 
 
-    addons_path= /mnt/extra-addons,/mnt/oca_collection/odoo-formio/,/mnt/oca_collection/helpdesk/,/mnt/oca_collection/server-brand/,/mnt/oca_collection/server-ux/,/mnt/3p_collection,/mnt/extra-addons/custom_solarkraft,/mnt/extra-addons/llm
+    addons_path= /mnt/extra-addons,/mnt/oca_collection/odoo-formio/,/mnt/oca_collection/helpdesk/,/mnt/oca_collection/server-brand/,/mnt/oca_collection/server-ux/,/mnt/extra-addons/custom_solarkraft,/mnt/extra-addons/llm
 
     # Configurations for DokuScan
     gg_project_id = simplify-erp-com
