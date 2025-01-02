@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-volumes
+  namespace: longhorn-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-volumes
+  template:
+    metadata:
+      labels:
+        app: python-volumes
+    spec:
+      serviceAccountName: python-volumes-service-account # Link the ServiceAccount here
+      containers:
+      - name: python-volumes
+        image: crepo.re-cloud.io/re-cloud/system/python-volumes:beta-2
+        imagePullPolicy: IfNotPresent
+      imagePullSecrets:
+      - name: harbor-re-cloud
+      nodeSelector:
+        odoo: "true"
+      tolerations:
+      - key: "odoo"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"

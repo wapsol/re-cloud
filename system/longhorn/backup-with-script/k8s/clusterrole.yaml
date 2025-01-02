@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: python-volumes-clusterrole
+  # namespace: longhorn-system # Replace with your target namespace
+rules:
+- apiGroups: [ "snapshot.storage.k8s.io" ]
+  resources: [ "volumesnapshots" ]
+  verbs: [ "create", "get", "list", "watch", "delete" ]
+- apiGroups: [ "" ]
+  resources: [ "persistentvolumeclaims" ]
+  verbs: [ "create", "get", "list", "watch", "delete" ]

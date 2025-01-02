@@ -31,7 +31,7 @@ spec:
         resources: {}
         volumeMounts:
         - name: odoo-data
-          mountPath: /var/lib/odoo
+          mountPath: /var/lib/odoo/odoo-data
         - name: odoo-config
           mountPath: /etc/odoo
 

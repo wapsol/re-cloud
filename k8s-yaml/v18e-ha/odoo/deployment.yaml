@@ -6,7 +6,7 @@ metadata:
   labels:
     app: odoo18-ha
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: odoo18-ha
@@ -18,7 +18,7 @@ spec:
       volumes:
       - name: odoo-data
         persistentVolumeClaim:
-          claimName: v18e-ha-pvc
+          claimName: v18e-ha-pvc-snapshot
       containers:
       - name: odoo
         image: 127.0.0.1:5000/odoo-v18e:commit-5
