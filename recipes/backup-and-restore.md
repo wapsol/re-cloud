@@ -7,12 +7,14 @@ This guide provides step-by-step instructions for backing up and restoring volum
 1. [Backup Volume](#backup-volume)
    - [Manual Backup](#manual-backup)
    - [Automated Backup with Cron Job](#automated-backup-with-cron-job)
-2. [Restore Volume from Backup](#restore-volume-from-backup)
+2. [Restore Volume from Backup Manually](#restore-volume-from-backup-manually)
    - [Create Volume from Backup](#1-create-volume-from-backup)
    - [Scale Down Odoo Replicas](#2-scale-down-odoo-replicas-to-0)
    - [Create PV/PVC from Longhorn Volume](#3-create-pvpvc-from-longhorn-volume)
    - [Scale Out the Odoo Deployment](#4-scale-out-the-deployment-odoo)
-
+3. [Restore Volume from Backup with Python script](#restore-volume-from-backup-with-python-script)
+   - [Create PVC from Backup](#1-create-pvc-from-backup)
+   - [Update Deployment using new PVC created from backup](#2-update-deployment-create-pvc-from-backup)
 ---
 
 ## Backup Volume
@@ -55,7 +57,7 @@ Automating backups ensures that your data is backed up at regular intervals with
 
 ---
 
-## Restore Volume from Backup
+## Restore Volume from Backup Manually
 
 In the event of data loss or corruption, restoring your volume from a backup ensures minimal downtime and data integrity.
 
@@ -161,3 +163,72 @@ After setting up the restored volume, scale the Odoo deployment back to its orig
 By following this guide, you can effectively manage backups and restorations of your Kubernetes volumes using Longhorn. Regular backups, whether manual or automated, ensure data security and facilitate quick recovery in case of unexpected issues.
 
 For any further assistance or advanced configurations, refer to the [Longhorn Documentation](https://longhorn.io/docs/) or contact your system administrator.
+
+
+## Restore Volume from Backup with Python Script
+### 1. Create PVC from backup
+
+- Get the Longhorn `volume name` mapping current PVC
+
+![alt text](volume-doc-images/volume-name.png)
+
+- Get `backup id` information from Longhorn UI `backup` tab
+
+![alt text](volume-doc-images/backup-id.png)
+
+- Exec to python-volume pod located in `longhorn-system namespace`
+
+![alt text](volume-doc-images/exec-pod.png)
+
+- Run the python script
+```bash
+python main.py create-pvc-from-backup \
+--namespace <change_me_with_namespace> \
+--pvc-name <give_me_a_name> \
+--backup-id <id_get_from_previous_step> \
+--volume-name <volume_name_from_previous_step>
+```
+
+### 2. Update deployment using new PVC created from backup
+- Manual apply with CLI
+- Edit deployment yaml file
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo18-ha
+  namespace: v18e-ha
+  labels:
+    app: odoo18-ha
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odoo18-ha
+  template:
+    metadata:
+      labels:
+        app: odoo18-ha
+    spec:
+      volumes:
+      - name: odoo-data
+        persistentVolumeClaim:
+          claimName: <CHANGE_ME_WITH_PVC_NAME_FROM_BACKUP>
+      containers:
+      - name: odoo
+        image: 127.0.0.1:5000/odoo-v18e:commit-5
+        envFrom:
+        - configMapRef:
+            name: odoo-ha-config
+    .........
+```
+- Apply kubectl
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+- Edit from k*s management tools: k9s or lens
+- Update PVC name 
+
+![alt text](volume-doc-images/update-pvc.png)

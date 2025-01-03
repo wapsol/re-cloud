@@ -1,7 +1,7 @@
 # SNAPSHOT VOLUME WITH LONGHORN AND PYTHON SCRIPT
 
 
-## Create snapshot with python script
+### 1. Create snapshot with python script
 - Exec to python-volume pod located in `longhorn-system namespace`
 
 ![alt text](volume-doc-images/exec-pod.png)
@@ -37,7 +37,7 @@ python main.py create-pvc-from-snapshot \
     --access-mode ReadWriteMany
 ```
 
-## Update deployment using new PVC created from snapshot
+### 2. Update deployment using new PVC created from snapshot
 - Manual apply with CLI
 - Edit deployment yaml file
 ```yaml

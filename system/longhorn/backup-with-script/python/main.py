@@ -96,7 +96,7 @@ def delete_volume_snapshot(api_instance, namespace, snapshot_name):
     )
     print(f"VolumeSnapshot '{snapshot_name}' deleted in namespace '{namespace}'.")
 
-def create_pvc_from_snapshot(api_instance, snapshot_name, pvc_name, storage_size , storage_class_name, access_mode="ReadWriteOnce", namespace="default",timeout=300, interval=5):
+def create_pvc(api_instance, snapshot_name, pvc_name, storage_size , storage_class_name, access_mode="ReadWriteOnce", namespace="default",timeout=300, interval=5):
     """
     Create a PersistentVolumeClaim from a VolumeSnapshot.
 
@@ -174,7 +174,7 @@ def list_volume_snapshots(api_instance, namespace):
     for snapshot in snapshots.get("items", []):
         print(f"  - Name: {snapshot['metadata']['name']}")
 
-def associate_volume_snapshot_and_content(api_instance, snapshot_name, snapshot_content_name, snapshot_class_name, snapshot_source_handle):
+def associate_volume_snapshot_and_content(api_instance, pvc_name, backup_id, volume_name , namespace):
     """
     Create VolumeSnapshot and VolumeSnapshotContent resources.
 
@@ -189,6 +189,12 @@ def associate_volume_snapshot_and_content(api_instance, snapshot_name, snapshot_
     - Tuple of VolumeSnapshot and VolumeSnapshotContent details if created successfully, else None.
     """
     # VolumeSnapshotContent definition
+    snapshot_class_name="longhorn-backup-vsc"
+    snapshot_content_name = f"{pvc_name}-snapshot-content"
+    snapshot_source_handle = f"bak://{volume_name}/{backup_id}"
+
+    snapshot_name = f"{pvc_name}-snapshot"
+
     snapshot_content_body = {
         "apiVersion": "snapshot.storage.k8s.io/v1",
         "kind": "VolumeSnapshotContent",
@@ -204,17 +210,16 @@ def associate_volume_snapshot_and_content(api_instance, snapshot_name, snapshot_
             },
             "volumeSnapshotRef": {
                 "name": snapshot_name,
-                "namespace": "default"
+                "namespace": namespace
             }
         }
     }
 
     # Create VolumeSnapshotContent
     try:
-        created_content = api_instance.create_namespaced_custom_object(
+        created_content = api_instance.create_cluster_custom_object(
             group="snapshot.storage.k8s.io",
             version="v1",
-            namespace="default",
             plural="volumesnapshotcontents",
             body=snapshot_content_body
         )
@@ -229,7 +234,7 @@ def associate_volume_snapshot_and_content(api_instance, snapshot_name, snapshot_
         "kind": "VolumeSnapshot",
         "metadata": {
             "name": snapshot_name,
-            "namespace": "default"
+            "namespace": namespace
         },
         "spec": {
             "volumeSnapshotClassName": snapshot_class_name,
@@ -244,33 +249,35 @@ def associate_volume_snapshot_and_content(api_instance, snapshot_name, snapshot_
         created_snapshot = api_instance.create_namespaced_custom_object(
             group="snapshot.storage.k8s.io",
             version="v1",
-            namespace="default",
+            namespace=namespace,
             plural="volumesnapshots",
             body=snapshot_body
         )
         print(f"VolumeSnapshot '{snapshot_name}' created successfully.")
-        return created_snapshot, created_content
+        return snapshot_name
     except ApiException as e:
         print(f"Failed to create VolumeSnapshot: {e}")
         return None, None
 
-# def create_pvc_from_backup():
+def create_pvc_from_backup(api_v1_instance, api_instance, pvc_name, backup_id, volume_name, namespace, storage_size, access_mode, storage_class_name):
+    snapshot_name = associate_volume_snapshot_and_content(api_instance, pvc_name, backup_id, volume_name , namespace)
+    create_pvc(api_v1_instance, snapshot_name, pvc_name, storage_size, storage_class_name, access_mode, namespace )
 
 
 # Main function with argument parsing
 def main():
     parser = argparse.ArgumentParser(description="Manage Kubernetes CSI Snapshots using the Snapshot Controller.")
-    parser.add_argument("action", choices=["create-snapshot", "delete-snapshot", "list-snapshots", "create-pvc-from-snapshot"],
-                        help="Action to perform: create-snapshot, delete-snapshot, create-pvc-from-snapshot ,or list-snapshots")
+    parser.add_argument("action", choices=["create-snapshot", "delete-snapshot", "list-snapshots", "create-pvc-from-snapshot", "create-pvc-from-backup"],
+                        help="Action to perform: create-snapshot, delete-snapshot, create-pvc-from-snapshot, create-pvc-from-backup, or list-snapshots")
     parser.add_argument("--namespace", required=True, help="Kubernetes namespace")
     parser.add_argument("--pvc-name", help="Name of the PersistentVolumeClaim (required for create-snapshot)")
     parser.add_argument("--snapshot-name", help="Name of the VolumeSnapshot")
     parser.add_argument("--snapshot-class-name", help="Name of the VolumeSnapshotClass (required for create-snapshot)", default="longhorn-backup-vsc")
-    parser.add_argument("--access-mode", help="Name of the PVC access-mode (ReadWriteOnce, ReadWriteMany)")
+    parser.add_argument("--access-mode", help="Name of the PVC access-mode (ReadWriteOnce, ReadWriteMany)", default="ReadWriteMany")
     parser.add_argument("--storage-size", help="PVC storage size (default 5Gi)", default="5Gi" )
     parser.add_argument("--storage-class-name", help="Name of the VolumeSnapshotClass (required for create-snapshot)", default="longhorn")
-    parser.add_argument("--backup-id", help="Longhorn backup id")
-
+    parser.add_argument("--backup-id", help="Longhorn backup id (get from Longhorn UI)")
+    parser.add_argument("--volume-name", help="Longhorn volume name (get from Longhorn UI)")
 
     args = parser.parse_args()
 
@@ -297,9 +304,13 @@ def main():
         if not args.pvc_name or not args.snapshot_name or not args.namespace:
             raise ValueError("PVC name, namespace and snapshot name are required for create-pvc-from-snapshot action.")
         api_instance = configure_k8s_v1core()
-        create_pvc_from_snapshot(api_instance, args.snapshot_name, args.pvc_name, args.storage_size, args.storage_class_name, args.access_mode, args.namespace)
+        create_pvc(api_instance, args.snapshot_name, args.pvc_name, args.storage_size, args.storage_class_name, args.access_mode, args.namespace)
 
-
+    elif args.action == "create-pvc-from-backup":
+        if not args.volume_name or not args.backup_id or not args.namespace or not args.pvc_name: 
+            raise ValueError("PVC name, namespace, volume-name backup-id name are required for create-pvc-from-backup action.")
+        api_v1_instance = configure_k8s_v1core()
+        create_pvc_from_backup(api_v1_instance, api_instance ,args.pvc_name, args.backup_id, args.volume_name, args.namespace, args.storage_size, args.access_mode, args.storage_class_name)
 
 if __name__ == "__main__":
     main()
