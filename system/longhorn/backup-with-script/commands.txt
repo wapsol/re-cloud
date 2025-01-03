@@ -7,4 +7,15 @@ python main.py list-snapshots --namespace v18e-ha
 
 python main.py delete-snapshot --namespace v18e-ha --snapshot-name v18e-ha-pvc-snapshot-1
 
-python main.py create-pvc-from-snapshot --namespace v18e-ha --snapshot-name v18e-ha-pvc-snapshot-1 --pvc-name v18e-ha-pvc-snapshot --access-mode ReadWriteMany
+python main.py create-pvc-from-snapshot \
+--namespace v18e-ha \
+--snapshot-name v18e-ha-pvc-snapshot-1 \
+--pvc-name v18e-ha-pvc-snapshot \
+--access-mode ReadWriteMany
+
+
+python main.py create-pvc-from-backup \
+--namespace v18e-ha \
+--pvc-name v18e-ha-odoo-from-backup \
+--backup-id backup-f206c6f5aca042f3 \
+--volume-name pvc-693160f5-8356-45c8-9af3-588be03a4d2b 
