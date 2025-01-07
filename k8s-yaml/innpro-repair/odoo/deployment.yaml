@@ -22,9 +22,10 @@ spec:
       - name: odoo-config
         configMap:
           name: innpro-repair-odoo-config-app
+          defaultMode: 420
       containers:
       - name: odoo
-        image: crepo.re-cloud.io/re-cloud/odoo-innpro-repair:commit-1
+        image: crepo.re-cloud.io/re-cloud/odoo-innpro-repair:system-1
         ports:
         - containerPort: 8069
           protocol: TCP
@@ -39,11 +40,20 @@ spec:
           mountPath: /etc/odoo
         - name: odoo-data
           mountPath: /var/lib/odoo/odoo-data
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
         imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        odoo: 'true'
+      securityContext: {}
+      schedulerName: default-scheduler
       tolerations:
       - key: odoo
         operator: Equal
         value: 'true'
         effect: NoSchedule
-      nodeSelector:
-        odoo: 'true'
+      imagePullSecrets:
+      - name: harbor-re-cloud
