@@ -1,249 +1,207 @@
-This recipe outlines how you can migrate an Odoo Docker instance into a Kubernetes cluster.
-It involves following sub-systems:
+# Migrating Odoo from Docker to Kubernetes
 
-1. `k0s` based Kubernetes cluster.
-2. `longhorn` for persistent-volumes.
-3. `k9s` as cluster overview
-4. `kubectl`, `k` as client to the cluster
+This recipe guides you through migrating an Odoo Docker instance to a Kubernetes cluster with High Availability (HA) configuration.
 
-This recipe aims to help you run Odoo in a High Availability (HA) mode, which means, if one instance goes down, users will continue to be able access the service, albiet at a slightly reduced speed.
+## Prerequisites
 
-If you are new to Kubernetes, read the basics here, and there's lots of useful information on the web and YouTube, not to mention your favourite LLM based AI-chatbot!
+### Required Components
+- `k0s` - Kubernetes distribution
+- `longhorn` - Storage solution for persistent volumes
+- `k9s` - Cluster management UI
+- `kubectl` (alias `k`) - Kubernetes command-line tool
 
-# Baseline Situation
+### Initial Setup Requirements
+1. Running Odoo on Docker (Linux VM or Baremetal)
+2. Persistent volumes on Linux host for:
+   - PostgreSQL database files
+   - `/etc/` configuration
+   - `/addons/` directory
+   - Odoo log files
+3. Git-based deployment workflow
 
-You should be using this recipe if your current situaion is as follows:
-
-1. You are running Odoo on Dockers on Linux VMs or Baremetal.
-2. You are using the Linux host for persistent volumes. This means, you are storing some or all the below on the VM/Baremetal:
-
-    - PostgreSQL database files
-    - /etc/ folder
-    - /addons/ folder
-    - Odoo's log files
-
-    And these are being mounted into the Docker-Container in runtime.
-
-3. Your team uses Git to push code from their dev-environments, and pull via CLI on run-environments (staging, production and maybe others).
-
-## Current Non-cluster Setup
-
+### Current Architecture
 ![image](https://github.com/user-attachments/assets/50274eaa-61ea-4c42-9fd5-9701530b19a3)
 
-# Step 1: Backup your Dockers
+## Migration Steps
 
-1. Back up Docker images (`oad1`, `opd1`).
-2. Back up the Perisitent volumes (`pvo1`, `pvp1`)
+### 1. Backup Docker Environment
 
-```
-## Save the docker image
-sudo docker image save 127.0.0.1:5000/odoo-kj:commit-1 > odoo-kj.tar
-```
+1. Back up Docker images:
+   ```bash
+   # Save Docker images (oad1, opd1)
+   sudo docker image save 127.0.0.1:5000/odoo-kj:commit-1 > odoo-kj.tar
+   ```
 
-# Step 2: Transfer Images and Volumes to Transition Folder `/tf/`
+2. Back up persistent volumes (pvo1, pvp1)
 
-- This step will copy the local docker image for example 127.0.0.1:5000/odoo-commercecore:commit-1 (IMAGE_NAME in the building step) to other nodes in the cluster
-- action those commands
+### 2. Transfer to Cluster Nodes
 
-```
-## Copy to other nodes
-scp odoo-kj.tar tan@88.99.145.186:/home/tan/build-image
+1. Copy Docker images to cluster nodes:
+   ```bash
+   # Copy image to other nodes
+   scp odoo-kj.tar user@node-ip:/home/user/build-image
 
-## ssh to other nodes 
-ssh tan@88.99.145.186
-## Load docker image
-sudo docker load < odoo-kj.tar
+   # On target node:
+   sudo docker load < odoo-kj.tar
+   sudo docker push 127.0.0.1:5000/odoo-kj:commit-1
+   ```
 
-## Push to local registry
-sudo docker push 127.0.0.1:5000/odoo-kj:commit-1
-```
+### 3. Prepare Kubernetes Deployment
 
-# Step 3: Prepare your Kubernetes YAML Deployment Files
+1. Configure and apply PostgreSQL resources:
+   ```bash
+   cd k8s-yaml/[app-name]/postgresql
+   kubectl apply -f .
+   ```
 
-## Apply the Odoo and PostgreSQL instances
+2. Configure and apply Odoo resources:
+   ```bash
+   cd k8s-yaml/[app-name]/odoo
+   kubectl apply -f .
+   ```
 
-- edit the name of the yaml files follow with the name of the app we want to migrate
-- Edit the postgresql and odoo versions so that it match the app (example odoo:18, postgresql:17)
-- use commercecore as a template
-- Apply all the resources with kubectl tool
+### 4. Data Migration
 
-```
-## Edit the name commercecore 
-cd k8s-yaml/commercecore/postgresql
-k apply -f .
+1. Copy Odoo data:
+   ```bash
+   # Example data transfer
+   scp -r /var/lib/docker/volumes/[volume-name]/_data root@node-ip:/data/[app-name]/odoo-data
+   ```
 
-cd k8s-yaml/commercecore/odoo
-k apply -f .
-```
+2. Migrate PostgreSQL database:
+   ```bash
+   # Backup database
+   pg_dump -U odoo -d [dbname] > [dbname].sql
 
-## Copy the odoo data and the postgresql database to the rec1 (pick an other machine is okay) machine
+   # Copy to target node
+   scp [dbname].sql root@node-ip:/data/[app-name]/postgre
 
-- find all the volume from the containers: docker inspect ...
-- Copy odoo data: using scp or some tools that you familiar with
-- take and Copy sql database backup or the postgresql database folder
+   # Copy into pod
+   kubectl cp -n [namespace] [dbname].sql [pod-name]:/var/lib/postgresql
+   
+   # Restore database
+   psql -U odoo -d [dbname] < [dbname].sql
+   ```
 
-```
-## Get the docker volumes
-docker inspect ...
+### 5. Build Kubernetes-Ready Docker Image
 
-#Example
-scp -r /var/lib/docker/volumes/simplify-erp14_odoo-web-data/_data root@88.99.145.186:/data/commercecore/odoo-data
+1. Create Dockerfile:
+   ```dockerfile
+   FROM odoo:[version]
 
-## Backup postgresql database
-pg_dump -U odoo -d commercecore > commercecore.sql
+   COPY --chown=odoo addons /mnt/extra-addons
+   COPY --chown=odoo enterprise /mnt/enterprise
+   ```
 
-scp commercecore-all.sql root@88.99.145.186:/data/commercecore/postgre
-```
+2. Build and push image:
+   ```bash
+   IMAGE_NAME=127.0.0.1:5000/odoo-[app-name]:commit-1
+   sudo docker build . --tag $IMAGE_NAME
+   sudo docker push $IMAGE_NAME
+   ```
 
-## Copy the data in rec1 (or other machine) machine into the pods
-- Using the kubectl tool to copy the data in to the pods
+### 6. Deploy to Kubernetes
 
-```
-## again edit the pod and namespace name follow the migration app 
-kubectl cp -n commercecore . <pod_name>:/var/lib/odoo/
+1. Update deployment configuration:
+   - Update image reference in deployment YAML
+   - Scale replicas for HA (minimum 2)
 
-## Copy postgre sql to the pods
-kubectl cp -n commercecore serp_09_12.sql commercecore-postgre-9d95c6484-5qtsz:/var/lib/postgresql
-## Action restore postgresql
-psql -U odoo -d commercecore < commercecore.sql 
-```
+2. Apply changes:
+   ```bash
+   kubectl rollout restart deployment -n [namespace] [deployment-name]
+   kubectl apply -f ingress.yaml
+   ```
 
-# Step 4: Build Docker image for k*s Runtime
+### 7. Configure TLS and Ingress
 
-- create Dockerfile right in the folder which contains the add-on folder, here is and example
+1. Create ClusterIssuer:
+   ```yaml
+   apiVersion: cert-manager.io/v1
+   kind: ClusterIssuer
+   metadata:
+     name: letsencrypt-prod
+   spec:
+     acme:
+       server: https://acme-v02.api.letsencrypt.org/directory
+       email: [your-email]
+       privateKeySecretRef:
+         name: letsencrypt-prod
+       solvers:
+       - http01:
+           ingress:
+             class: traefik
+   ```
 
-```
-# Dockerfile
+2. Configure Service:
+   ```yaml
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: odoo
+     namespace: [namespace]
+   spec:
+     ports:
+       - name: http
+         port: 8069
+         targetPort: 8069
+       - name: longpolling
+         port: 8072
+         targetPort: 8072
+     selector:
+       app: odoo
+   ```
 
-FROM odoo:<edit-the-version-follow-the-app>
+3. Configure Ingress:
+   ```yaml
+   apiVersion: networking.k8s.io/v1
+   kind: Ingress
+   metadata:
+     name: [app-name]-ingress
+     namespace: [namespace]
+   spec:
+     ingressClassName: nginx
+     rules:
+     - host: [your-domain]
+       http:
+         paths:
+         - path: /
+           pathType: Prefix
+           backend:
+             service:
+               name: odoo
+               port:
+                 number: 8069
+     tls:
+     - hosts:
+       - [your-domain]
+       secretName: [app-name]-tls
+   ```
 
-COPY --chown=odoo addons /mnt/extra-addons
-COPY --chown=odoo enterprise /mnt/enterprise
-<Add more COPY actions here if there are mores add-on folder to run>
+4. Configure TLS Certificate:
+   ```yaml
+   apiVersion: cert-manager.io/v1
+   kind: Certificate
+   metadata:
+     name: [app-name]-tls
+     namespace: [namespace]
+   spec:
+     dnsNames:
+       - [your-domain]
+     secretName: [app-name]-tls
+     issuerRef:
+       name: letsencrypt-prod
+       kind: ClusterIssuer
+   ```
 
-```
+### 8. Final Configuration
 
-- Run docker build and push image to local registry
+1. Update DNS records for your domain
+2. Verify deployment status
+3. Test application functionality
 
-```
-## Run those commands to build the image 
-IMAGE_NAME=127.0.0.1:5000/odoo-commercecore:commit-1
-sudo docker build . --tag $IMAGE_NAME
-sudo docker push $IMAGE_NAME
-```
-
-# Step 5: Load (new) Docker image into k*s Runtime
-
-## Restart the Odoo deployments and apply the ingress and tls cert creation
-- Change the image name the odoo deployment.yaml files
-- from odoo:18 -> 127.0.0.1:5000/odoo-commercecore:commit-1 (IMAGE_NAME in the building step)
-
-## Restart to deployment Odoo
-```
-kubectl rollout restart deployment -n <namespace_follow_app_name> <deployment_follow_app_name> 
-
-cd k8s-yaml/commercecore
-kubectl apply -f ingress.yaml
-```
-
-## Scale replicas in the deployment yaml
-
-- Edit the replicas factor in the odoo deployment yaml file from 1 to 2 => ensure HA
-
-## Enable TLS with `ingress-nginx` and `cert-manager`
-
-Create an issuer file:
-```
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer # I'm using ClusterIssuer here
-metadata:
-  name: letsencrypt-prod
-spec:
-  acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
-    email: <your-email-address>
-    privateKeySecretRef:
-      name: letsencrypt-prod
-    solvers:
-    - http01:
-        ingress:
-          class: traefik 
-```
-If you already created this, you can skip
-
-Expose a deployment via a service:
-
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: odoo
-  namespace: tyroled
-spec:
-  ports:
-    - name: http
-      port: 8069
-      targetPort: 8069
-    - name: longpolling
-      port : 8072
-      targetPort: 8072
-  selector:
-    app: odoo
-```
-
-In this case odoo app is exposed via port 8069. Make sure when defining an ingress, port to be exposed via ingress must corresponds to exposed service port:
-```
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: tyroled-ingress
-  namespace: tyroled
-spec:
-  ingressClassName: nginx
-  rules:
-  - host: tyroled.simplify-erp.de
-    http:
-      paths:
-      - backend:
-          service:
-            name: odoo
-            port:
-              number: 8069
-        path: /
-        pathType: Prefix
-  tls:
-  - hosts:
-    - tyroled.simplify-erp.de
-    secretName: tyroled-tls
-status:
-  loadBalancer:
-    ingress:
-    - ip: 88.99.162.52
-```
-
-## Change DNS
-
-In addition, ask your admin for changing DNS record of domain you want to apply into.
-You may want to define a secret file to get TLS certificate:
-
-```
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: tyroled-tls
-  namespace: tyroled
-spec:
-  dnsNames:
-    - tyroled.simplify-erp.de
-  secretName: tyroled-tls
-  issuerRef:
-    name: letsencrypt-prod
-    kind: ClusterIssuer
-```
-
-# Step 6: Final Checks
-
-## Verify status of the app
-- Edit local /etc/hosts file and make sure the app is deployed correctly
+## Notes
+- Replace placeholders (marked with `[]`) with your actual values
+- Ensure proper backups before migration
+- Test in a staging environment first
+- Monitor system during and after migration
 
