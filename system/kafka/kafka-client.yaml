@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2025-01-14T15:34:44Z"
+  labels:
+    run: kafka-release-client
+  name: kafka-release-client
+  namespace: kafka
+spec:
+  containers:
+  - command:
+    - sleep
+    - infinity
+    image: docker.io/bitnami/kafka:3.9.0-debian-12-r4
+    imagePullPolicy: IfNotPresent
+    name: kafka-release-client
+    resources: {}
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: chat.voltaic.systems
+  hostAliases:
+  - ip: "88.99.145.186"
+    hostnames:
+    - "kafka.karoona.net"
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
