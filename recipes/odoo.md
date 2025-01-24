@@ -2,6 +2,14 @@
 
 This recipe guides you through migrating an Odoo Docker instance to a Kubernetes cluster with High Availability (HA) configuration.
 
+Following systems-components are involved.
+
+1. Kubernetes
+   1. Pods containing Odoo and PostgreSQL containers
+   2. Persistent Volume Claims (PVCs) to Longhorn PS.
+2. Longhorn Persistent Storage
+3. Harbor Container Repository
+
 ## Prerequisites
 
 ### Required Components
