@@ -282,7 +282,6 @@ Within a few minutes (depending on your issuer’s ACME DNS challenge/HTTP chall
 https://chat.mydomain.de
 ```
 
----
 
 ## 7. Validation
 
@@ -335,5 +334,3 @@ https://chat.mydomain.de
 ---
 
 **Congratulations!** You have successfully deployed OpenWebUI with Ollama as its backend on k0s, using Longhorn for persistent storage, and exposed it securely via HTTPS at `https://chat.mydomain.de`.  
-```
-
