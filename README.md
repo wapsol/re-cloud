@@ -1,11 +1,17 @@
 ### What is re-cloud?
 
-re-cloud is a software package that enables to spin up a private cloud on your own bare-metal hardware within minutes. We call bare metal hardware "**nodes**".
+re-cloud is a software package that enables to spin up a private cloud on your own bare-metal hardware within minutes. 
+
+Fundamentally, a private cloud gives you an unlimitedly scalable compute units (VMs), storage and networking capabilities including security. This enables companies to easily run their own compute infrastructure.
+
+### Minimum Requirements
+
+We call bare metal hardware "**nodes**".
 You will need at least 3 nodes with the following minimum configuration to get re-cloud initially set up. After that, you can add nodes as your needs scale.
 
 - 8 core CPU
 - 64 GB RAM
-- 1 TiB SSD
+- 1 TiB SSD or NVMe
 
 ### What can you do with re-cloud?
 
