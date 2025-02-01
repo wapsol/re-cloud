@@ -1,6 +1,8 @@
 re-cloud provides out of the box **Stacks**, which are sets of application software that help organisations get up and running fast, depeding on your needs. 
 You can of course mix and match applications from Stacks.
 
+Stacks can be freely extended with packages of software applications that you would like to provide to your users.
+
 This page documents the Stacks available at the current time with brief descriptions.
 
 ## AI Stack
