@@ -1,4 +1,4 @@
-### What is re-cloud?
+## What is re-cloud?
 
 re-cloud is a software package that enables to spin up a private cloud on your own bare-metal hardware within minutes. 
 
@@ -6,7 +6,7 @@ Fundamentally, re-cloud provides you an unlimitedly scalable compute units (VMs)
 In addition, it provides Kubernetes as a high availability application runtime, for your productive applications with persistent storage.
 These capabilities enable organisations to run their own compute infrastructure, either on data-center or on-premise hardware.
 
-### Minimum Requirements
+## Minimum Requirements
 
 We call bare metal hardware "**nodes**".
 You will need at least 3 nodes with the following minimum configuration to get re-cloud initially set up. After that, you can add nodes as your needs scale.
@@ -18,7 +18,7 @@ You will need at least 3 nodes with the following minimum configuration to get r
 We develop for, and hence recommend, Ubuntu Linux latest stable. 
 You will need root access with SSH to all your nodes.
 
-### What can you do with re-cloud?
+## What can you do with re-cloud?
 
 Depending on the type of organisation you are, you can use your private cloud for specific functions.
 To support you as much as possible out of the box, we provide "**Stacks**" of software applications. These help you get productive with your re-cloud fast, in the best cases within an hour or two.
@@ -33,3 +33,24 @@ We support following Stacks:
 Lists of software packages available in Stacks are documented in [stacks.md](https://).
 
 Depending on your high-availability needs, Stacks are installed on your private-cloud as Docker containers, either on VMs on re-cloud, or the optional Kubernetes cluster running on it.
+
+# Architecture
+
+## Controllers and Workers
+
+
+
+## Storage
+
+re-cloud differentiates between hot and cold storage in terms of a) provisioning disk resoures and b) latency of accessing data.
+
+### Hot Storage
+
+H-Storage is mounted initially on the same hardware that the compute-VM is running, hence offering rapid access to disk-resources.
+It is mounted at boot-time.
+
+### Cold Storage
+
+C-Storage can be attached to (and detached from) any compute-VM as an additional resource. Sometimes, these resources are referred to as Volumes.
+
+Usually one or more hardware nodes are dedicated to storage. Such nodes are used to create and expand storage Volumes, hence offering software developers the necessary resources according to their applications' needs.
