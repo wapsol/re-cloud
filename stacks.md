@@ -3,45 +3,45 @@ You can of course mix and match applications from Stacks.
 
 This page documents the Stacks available at the current time with brief descriptions.
 
-### AI Stack
+## AI Stack
 
-#### Ollama
+### Ollama
 
 An LLM-inferencing server including AI Chat, and an API to query your private LLMs.
 
-#### ChromaDB
+### ChromaDB
 
 A vector-database for your RAG and fine-tuning projects.
 
-### Office Stack
+## Office Stack
 
-#### NextCloud
+### NextCloud
 
 A cloud based file-server that allows company users to maintain a common repository. 
 Files are then available on browser, desktop file managers and iOS and Android module apps.
 
-#### Only Office
+### Only Office
 
 A office suite that runs completely on your private cloud. 
 Think of this as Google Docs on your private cloud with all data and files stored locally.
 
-### IoT and Industy 4.0 Stack
+## IoT and Industy 4.0 Stack
 
-#### Eclipse Kapua
+### Eclipse Kapua
 
 Eclipse Kapua™ is a modular integration platform for IoT devices and smart sensors that aims at bridging Operation Technology with Information Technology.
 
-#### Eclipse Kura
+### Eclipse Kura
 
 A gateway-level intermediatory edge framework between your IoT devices and central Kapua.
 
 Eclipse Kura is an edge framework designed to simplify the development, deployment, and management of IoT applications. It provides a robust and flexible environment for building IoT solutions that require edge computing capabilities, device management, and seamless cloud integration.
 
-### SaaS and Software 
+## SaaS and Software 
 
 - React.js
 - Python, PHP and Ruby
 
-### Data Engineering Stack
+## Data Engineering Stack
 
 - Cloudquery
