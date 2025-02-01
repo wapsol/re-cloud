@@ -29,18 +29,19 @@ Think of this as Google Docs on your private cloud with all data and files store
 
 #### Eclipse Kapua
 
-A central data-management platform on your private cloud supporting a variety of communication protocols, and a user-friendly browser based user-interface.
-
-> Eclipse Kapua™ is a modular integration platform for IoT devices and smart sensors that aims at bridging Operation Technology with Information Technology
+Eclipse Kapua™ is a modular integration platform for IoT devices and smart sensors that aims at bridging Operation Technology with Information Technology.
 
 #### Eclipse Kura
 
-A gateway-level intermediatory software between your IoT devices and central Kapua.
+A gateway-level intermediatory edge framework between your IoT devices and central Kapua.
+
+Eclipse Kura is an edge framework designed to simplify the development, deployment, and management of IoT applications. It provides a robust and flexible environment for building IoT solutions that require edge computing capabilities, device management, and seamless cloud integration.
 
 ### SaaS and Software 
 
-x
+- React.js
+- Python, PHP and Ruby
 
-### Data Management Stack
+### Data Engineering Stack
 
 - Cloudquery
