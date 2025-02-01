@@ -26,11 +26,12 @@ To support you as much as possible out of the box, we provide "**Stacks**" of so
 We support following Stacks:
 
 - AI Stack
-- Office Stack
-- IoT Stack
+- Office & Business Stack
+- IoT & Industry 4.0 Stack
 - SaaS and Software
+- Data Engineering Stack
 
-Lists of software packages available in Stacks are documented in [stacks.md](https://).
+Lists of software packages available in Stacks are documented in [stacks.md](https://github.com/wapsol/re-cloud/blob/master/stacks.md).
 
 Depending on your high-availability needs, Stacks are installed on your private-cloud as Docker containers, either on VMs on re-cloud, or the optional Kubernetes cluster running on it.
 
