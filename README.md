@@ -38,7 +38,12 @@ Depending on your high-availability needs, Stacks are installed on your private-
 
 ## Controllers and Workers
 
+To manage your private cloud, it's compute, storage, networking, security and application resources, one (or in larger deployments more) node is dedicated as a **Controller**. Think of this machine as an administration machine, and maintain it as such.
 
+The actual compute, storage and other such functional resources of your private cloud are settled on **Worker** nodes.
+Worker nodes are designed to be scaled almost infinitely, baring physical limits.
+
+Together Controllers and Workers ensure a high availability of resources to your organisation, scalable by its needs.
 
 ## Storage
 
@@ -46,11 +51,12 @@ re-cloud differentiates between hot and cold storage in terms of a) provisioning
 
 ### Hot Storage
 
-H-Storage is mounted initially on the same hardware that the compute-VM is running, hence offering rapid access to disk-resources.
-It is mounted at boot-time.
+H-Storage is mounted initially on the same hardware that the compute-VM is running, hence offering rapid access to disk-space.
+It is mounted at boot-time and carries on it essential operating system components and directories.
 
 ### Cold Storage
 
 C-Storage can be attached to (and detached from) any compute-VM as an additional resource. Sometimes, these resources are referred to as Volumes.
 
-Usually one or more hardware nodes are dedicated to storage. Such nodes are used to create and expand storage Volumes, hence offering software developers the necessary resources according to their applications' needs.
+Usually some of your hardware nodes are dedicated to storage. 
+Such nodes are used to create and expand storage Volumes, hence offering software developers the necessary resources according to their applications' needs.
