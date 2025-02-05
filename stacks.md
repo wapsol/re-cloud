@@ -39,7 +39,7 @@ A gateway-level intermediatory edge framework between your IoT devices and centr
 
 Eclipse Kura is an edge framework designed to simplify the development, deployment, and management of IoT applications. It provides a robust and flexible environment for building IoT solutions that require edge computing capabilities, device management, and seamless cloud integration.
 
-## SaaS and Software 
+## SaaS and Software Development
 
 - React.js
 - Python, PHP and Ruby
