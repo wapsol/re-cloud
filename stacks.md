@@ -55,3 +55,13 @@ Eclipse Kura is an edge framework designed to simplify the development, deployme
 
 ### Site VPN
 
+You can optionally provide VPN termination to your cloud in various scenarios. For example, all office/site users can access your SPC resources, applications running on them, files and objects etc. etc. over a solidly secure tunnel.
+
+Similarly, companies with IoT networks in the field, can terminate their IoT gateway connections on SPC on VPN tunnels.
+
+re-cloud makes it fast, easy and simple to create VPN endpoints and start tunnelling users, gateways and devices.
+
+### KALI
+
+- This SysStack is available from Horizon > Glacier for purposes of managing cloud security. 
+- It provides a set of penetration tests, an onboard intrusion detection system and control mechanisms for application security.
