@@ -1,9 +1,12 @@
-re-cloud provides out of the box **Stacks**, which are sets of application software that help organisations get up and running fast, depeding on your needs. 
-You can of course mix and match applications from Stacks.
+re-cloud provides out of the box **Stacks**, which are sets of application software (AppStacks), or systems software (SysStacks) that help organisations get up and running fast, depeding on your needs. 
+You can of course mix and match AppStacks.
+Likewise, some SysStacks are optional and some 
 
 Stacks can be freely extended with packages of software applications that you would like to provide to your users.
 
 This page documents the Stacks available at the current time with brief descriptions.
+
+# AppStacks
 
 ## AI Stack
 
@@ -47,3 +50,8 @@ Eclipse Kura is an edge framework designed to simplify the development, deployme
 ## Data Engineering Stack
 
 - Cloudquery
+
+# SysStacks
+
+### Site VPN
+
