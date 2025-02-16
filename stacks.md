@@ -10,6 +10,13 @@ This page documents the Stacks available at the current time with brief descript
 
 ## AI Stack
 
+- Ollama, ChromaDB, neo4js (RAG stack)
+- AutoML
+- Scikit-Learn, NLTK
+- Pandas, NumPy
+- Matplotlib, Seaborn
+- Tensorflow, Statsmodels
+
 ### Ollama
 
 An LLM-inferencing server including AI Chat, and an API to query your private LLMs.
@@ -50,6 +57,10 @@ Eclipse Kura is an edge framework designed to simplify the development, deployme
 ## Data Engineering Stack
 
 - Cloudquery
+
+## Enterprise Stack
+
+- MailPiler (Email-Archiving)
 
 # SysStacks
 
